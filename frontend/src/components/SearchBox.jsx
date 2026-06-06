@@ -56,19 +56,16 @@ export default function SearchBox({ onSearch, loading }) {
   return (
     <div style={{ width: "100%", maxWidth: 740 }}>
       {/* Search Card */}
-      <div style={{
+      <div className="search-card" style={{
         background: "rgba(18,18,32,0.9)",
         border: "1px solid rgba(255,255,255,0.11)",
         borderRadius: 20,
         padding: "18px 18px 18px 24px",
-        display: "flex", alignItems: "center", gap: 14,
         boxShadow: "0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,111,255,0.08)",
-        flexWrap: "wrap",
         transition: "border-color 0.3s, box-shadow 0.3s",
-        flexDirection: window.innerWidth < 640 ? "column" : "row",
       }}>
         {/* Keyword */}
-        <div style={{ flex: 1, minWidth: 160 }}>
+        <div className="search-input-group" style={{ minWidth: 160 }}>
           <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "1.2px", color: "var(--t3)", fontWeight: 600, marginBottom: 5 }}>
             Looking for
           </div>
@@ -87,12 +84,10 @@ export default function SearchBox({ onSearch, loading }) {
         </div>
 
         {/* Divider */}
-        {window.innerWidth >= 640 && (
-          <div style={{ width: 1, height: 40, background: "rgba(255,255,255,0.11)", flexShrink: 0 }} />
-        )}
+        <div className="search-divider" style={{ width: 1, height: 40, background: "rgba(255,255,255,0.11)", flexShrink: 0 }} />
 
         {/* City */}
-        <div style={{ flex: 1, minWidth: 140 }}>
+        <div className="search-input-group" style={{ minWidth: 140 }}>
           <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "1.2px", color: "var(--t3)", fontWeight: 600, marginBottom: 5 }}>
             City
           </div>
@@ -112,6 +107,7 @@ export default function SearchBox({ onSearch, loading }) {
 
         {/* Button */}
         <button
+          className="search-button"
           onClick={submit}
           disabled={loading || !keyword.trim() || !city.trim()}
           style={{
@@ -125,7 +121,6 @@ export default function SearchBox({ onSearch, loading }) {
             transition: "all 0.25s", whiteSpace: "nowrap", flexShrink: 0,
             opacity: !keyword.trim() || !city.trim() ? 0.6 : 1,
             cursor: loading || !keyword.trim() || !city.trim() ? "not-allowed" : "pointer",
-            width: window.innerWidth < 640 ? "100%" : "auto",
           }}
         >
           {loading ? (

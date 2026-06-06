@@ -308,7 +308,7 @@ export default function LeadCard({ lead, index }) {
         </div>
 
         {/* Footer actions */}
-        <div style={{ display: "flex", gap: 8 }}>
+        <div className="card-footer">
           <button onClick={copyContact} style={{
             flex: 1,
             background: isLoggedIn ? "rgba(124,111,255,0.07)" : "rgba(255,255,255,0.03)",

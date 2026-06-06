@@ -64,11 +64,10 @@ export default function ResultsSection({ results, lastSearch, onRefresh }) {
   };
 
   return (
-    <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 32px 100px" }}>
+    <div className="results-container">
       {/* Header */}
-      <div style={{
-        display: "flex", alignItems: "flex-end", justifyContent: "space-between",
-        marginBottom: 24, gap: 16, flexWrap: "wrap",
+      <div className="results-header" style={{
+        marginBottom: 24, gap: 16,
       }}>
         <div>
           <h2 style={{ fontFamily: "Syne, sans-serif", fontSize: 26, fontWeight: 700, letterSpacing: "-0.5px" }}>
@@ -85,7 +84,7 @@ export default function ResultsSection({ results, lastSearch, onRefresh }) {
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+        <div className="results-actions" style={{ gap: 10 }}>
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}

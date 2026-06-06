@@ -50,3 +50,201 @@ input, textarea { font-family: var(--font-b); }
     padding: 0 12px;
   }
 }
+
+/* ── SearchBox Responsive Styling ── */
+.search-card {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.search-input-group {
+  flex: 1;
+  width: auto;
+}
+
+.search-divider {
+  display: block;
+}
+
+.search-button {
+  width: auto;
+}
+
+@media (max-width: 640px) {
+  .search-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 20px !important;
+    gap: 16px !important;
+  }
+  
+  .search-input-group {
+    width: 100% !important;
+  }
+  
+  .search-divider {
+    display: none !important;
+  }
+  
+  .search-button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* ── Results Header & Actions ── */
+.results-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.results-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .results-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .results-actions {
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .results-actions button, .results-actions select {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* ── Homepage Stats ── */
+.stats-container {
+  display: flex;
+  margin-top: 56px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.stats-box {
+  flex: 1;
+  padding: 20px 32px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+
+.stats-box:last-child {
+  border-right: none;
+}
+
+@media (max-width: 768px) {
+  .stats-container {
+    flex-direction: column !important;
+    border-radius: 14px !important;
+    margin-top: 40px !important;
+    width: 100% !important;
+  }
+  
+  .stats-box {
+    padding: 16px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .stats-box:last-child {
+    border-bottom: none;
+  }
+}
+
+/* ── Homepage Category Buttons ── */
+.category-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.category-btn {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--t2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  font-family: var(--font-b);
+}
+
+@media (max-width: 640px) {
+  .category-container {
+    gap: 6px !important;
+  }
+  
+  .category-btn {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+    border-radius: 10px !important;
+  }
+}
+
+/* ── Card Footer Actions ── */
+.card-footer {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 400px) {
+  .card-footer {
+    flex-wrap: wrap !important;
+  }
+  .card-footer button, .card-footer a {
+    font-size: 11px !important;
+    padding: 8px 10px !important;
+  }
+}
+
+/* ── Navbar Live Badge Mobile Hide ── */
+@media (max-width: 640px) {
+  .navbar-live-badge {
+    display: none !important;
+  }
+}
+
+/* ── Category Button Hover ── */
+.category-btn:hover {
+  background: rgba(124, 111, 255, 0.1) !important;
+  border-color: rgba(124, 111, 255, 0.25) !important;
+  color: #b89aff !important;
+}
+
+/* ── Results Container Responsive Paddings ── */
+.results-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px 100px;
+}
+
+@media (max-width: 640px) {
+  .results-container {
+    padding: 0 16px 60px !important;
+  }
+}
+
+

@@ -111,9 +111,7 @@ export default function HomePage() {
           }}>
             Browse by Category
           </div>
-          <div style={{
-            display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center",
-          }}>
+          <div className="category-container">
             {[
               { icon: "👨‍⚕️", label: "Doctors"      },
               { icon: "🔧", label: "Plumbers"     },
@@ -139,30 +137,7 @@ export default function HomePage() {
                   document.getElementById("kw").value = cat.label;
                   handleSearch(cat.label, city);
                 }}
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 12,
-                  padding: "10px 16px",
-                  fontSize: 13,
-                  color: "var(--t2)",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  transition: "all 0.2s",
-                  fontFamily: "DM Sans, sans-serif",
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = "rgba(124,111,255,0.1)";
-                  e.currentTarget.style.borderColor = "rgba(124,111,255,0.25)";
-                  e.currentTarget.style.color = "#b89aff";
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-                  e.currentTarget.style.color = "var(--t2)";
-                }}
+                className="category-btn"
               >
                 {cat.icon} {cat.label}
               </button>
@@ -182,22 +157,14 @@ export default function HomePage() {
         )}
 
         {/* Stats */}
-        <div style={{
-          display: "flex", marginTop: 56,
-          background: "var(--card)", border: "1px solid var(--border)",
-          borderRadius: 16, overflow: "hidden",
-          animation: "fadeUp 0.6s ease 0.25s both",
-        }}>
+        <div className="stats-container" style={{ animation: "fadeUp 0.6s ease 0.25s both" }}>
           {[
             { n: "50K+", l: "Leads Found" },
             { n: "200+", l: "Cities" },
             { n: "3", l: "Data Sources" },
             { n: "Real-time", l: "Live Data" },
           ].map((s, i) => (
-            <div key={i} style={{
-              padding: "20px 32px", textAlign: "center",
-              borderRight: i < 3 ? "1px solid var(--border)" : "none",
-            }}>
+            <div key={i} className="stats-box">
               <div style={{
                 fontFamily: "Syne, sans-serif", fontSize: 26, fontWeight: 700,
                 background: "linear-gradient(135deg,var(--t1),#b89aff)",

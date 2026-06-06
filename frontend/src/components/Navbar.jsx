@@ -53,7 +53,7 @@ export default function Navbar() {
         {/* Right side */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {/* LIVE badge */}
-          <span style={{
+          <span className="navbar-live-badge" style={{
             background: "rgba(0,255,200,0.08)",
             border: "1px solid rgba(0,255,200,0.15)",
             color: "#00ffc8", padding: "6px 14px", borderRadius: 50,
