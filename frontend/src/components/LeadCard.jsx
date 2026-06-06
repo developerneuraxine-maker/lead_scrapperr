@@ -100,6 +100,12 @@ export default function LeadCard({ lead, index }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const saveCard = () => {
+    if (!isLoggedIn) { requireLogin(); return; }
+    setSaved(true);
+    toast.success("Lead saved!");
+  };
+
   const getQualityScore = (lead) => {
     let score = 0;
     if (lead.phone)     score += 1;
