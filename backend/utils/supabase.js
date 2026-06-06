@@ -10,12 +10,14 @@ const supabase = createClient(
 );
 
 // ── Log every search made on the website ──────────────────────────────────────
-async function logSearch(keyword, city, userIp, resultCount) {
+async function logSearch(keyword, city, userIp, resultCount, userName = "Guest", userEmail = null) {
   try {
     const { error } = await supabase.from("searches").insert({
       keyword:      keyword.toLowerCase().trim(),
       city:         city.trim(),
       user_ip:      userIp,
+      user_name:    userName || "Guest",
+      user_email:   userEmail || null,
       result_count: resultCount,
     });
     if (error) console.warn("Supabase logSearch error:", error.message);
@@ -54,7 +56,7 @@ async function saveLeads(keyword, city, leads) {
 }
 
 // ── Log every visitor to the website ─────────────────────────────────────────
-async function logVisitor(ip, userAgent) {
+async function logVisitor(ip, userAgent, userName = "Guest", userEmail = null) {
   try {
     // Get city/country from IP using free geo API
     let geoCity = null, geoCountry = null, geoRegion = null;
@@ -74,6 +76,8 @@ async function logVisitor(ip, userAgent) {
       geo_city:    geoCity,
       geo_country: geoCountry,
       geo_region:  geoRegion,
+      user_name:   userName || "Guest",
+      user_email:  userEmail || null,
     });
     if (error) console.warn("Supabase logVisitor error:", error.message);
   } catch (e) {

@@ -9,7 +9,18 @@ const API = axios.create({
 // Search for real businesses via Apify
 export async function searchLeads(keyword, city) {
   try {
-    const res = await API.post("/api/search", { keyword, city });
+    let userName = null;
+    let userEmail = null;
+    try {
+      const stored = localStorage.getItem("lf_user");
+      if (stored) {
+        const u = JSON.parse(stored);
+        userName = u.name || null;
+        userEmail = u.email || null;
+      }
+    } catch (_) {}
+
+    const res = await API.post("/api/search", { keyword, city, userName, userEmail });
     return res.data;
   } catch (err) {
     if (
@@ -23,6 +34,17 @@ export async function searchLeads(keyword, city) {
       );
     }
     throw err;
+  }
+}
+
+// Log general page visit with user details if logged in
+export async function logVisit(name, email) {
+  try {
+    const res = await API.post("/api/visit", { name, email });
+    return res.data;
+  } catch (err) {
+    console.warn("logVisit failed:", err.message);
+    return null;
   }
 }
 

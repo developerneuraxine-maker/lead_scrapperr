@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS searches (
   keyword      TEXT        NOT NULL,
   city         TEXT        NOT NULL,
   user_ip      TEXT,
+  user_name    TEXT        DEFAULT 'Guest',
+  user_email   TEXT,
   result_count INTEGER     DEFAULT 0,
   created_at   TIMESTAMPTZ DEFAULT NOW()
 );
@@ -43,6 +45,8 @@ CREATE TABLE IF NOT EXISTS visitors (
   geo_city    TEXT,
   geo_country TEXT,
   geo_region  TEXT,
+  user_name   TEXT        DEFAULT 'Guest',
+  user_email  TEXT,
   visited_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -65,3 +69,9 @@ CREATE POLICY "backend_insert_leads"    ON leads    FOR INSERT WITH CHECK (true)
 CREATE POLICY "backend_select_leads"    ON leads    FOR SELECT USING (true);
 CREATE POLICY "backend_insert_visitors" ON visitors FOR INSERT WITH CHECK (true);
 CREATE POLICY "backend_select_visitors" ON visitors FOR SELECT USING (true);
+
+-- ── Database Migrations (for existing installations) ──────────────────────────
+ALTER TABLE visitors ADD COLUMN IF NOT EXISTS user_name TEXT DEFAULT 'Guest';
+ALTER TABLE visitors ADD COLUMN IF NOT EXISTS user_email TEXT;
+ALTER TABLE searches ADD COLUMN IF NOT EXISTS user_name TEXT DEFAULT 'Guest';
+ALTER TABLE searches ADD COLUMN IF NOT EXISTS user_email TEXT;

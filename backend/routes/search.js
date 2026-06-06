@@ -9,7 +9,7 @@ const { logSearch, saveLeads, getCachedResults, clearCache } = require("../utils
 // Returns real scraped data from Google Maps via Apify
 // ─────────────────────────────────────────────────────────────────────────────
 router.post("/search", async (req, res) => {
-  const { keyword, city } = req.body;
+  const { keyword, city, userName, userEmail } = req.body;
 
   if (!keyword || !city) {
     return res.status(400).json({ error: "keyword and city are required" });
@@ -42,14 +42,14 @@ router.post("/search", async (req, res) => {
     const leads = await searchGoogleMaps(keyword, city);
 
     if (!leads.length) {
-      await logSearch(keyword, city, userIp, 0);
+      await logSearch(keyword, city, userIp, 0, userName, userEmail);
       return res.json({ results: [], total: 0, keyword, city });
     }
 
     console.log(`   ✓ Got ${leads.length} real leads from Apify`);
 
     // Save to Supabase in background — don't make user wait
-    logSearch(keyword, city, userIp, leads.length).catch(() => {});
+    logSearch(keyword, city, userIp, leads.length, userName, userEmail).catch(() => {});
     saveLeads(keyword, city, leads).catch(() => {});
 
     return res.json({

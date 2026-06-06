@@ -44,7 +44,8 @@ app.use(async (req, res, next) => {
     const ip = req.headers["x-forwarded-for"]?.split(",")[0]
                || req.socket.remoteAddress || "unknown";
     const ua = req.headers["user-agent"] || "unknown";
-    logVisitor(ip, ua).catch(() => {});
+    const { userName, userEmail } = req.body || {};
+    logVisitor(ip, ua, userName, userEmail).catch(() => {});
   }
   next();
 });
@@ -53,6 +54,20 @@ app.use(async (req, res, next) => {
 app.use("/api", searchRouter);
 app.use("/api", exportRouter);
 app.use("/api", analyticsRouter);
+
+// Track general site visits
+app.post("/api/visit", async (req, res) => {
+  try {
+    const ip = req.headers["x-forwarded-for"]?.split(",")[0]
+               || req.socket.remoteAddress || "unknown";
+    const ua = req.headers["user-agent"] || "unknown";
+    const { name, email } = req.body || {};
+    await logVisitor(ip, ua, name, email);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // ── Health Check — shows if keys are set ─────────────────────────────────────
 app.get("/health", (req, res) => {

@@ -1,9 +1,21 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import AdminPage from "./pages/AdminPage";
 import Navbar from "./components/Navbar";
+import { useAuth } from "./contexts/AuthContext";
+import { logVisit } from "./services/api";
 
 export default function App() {
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (loading) return;
+    const name = user?.name || "Guest";
+    const email = user?.email || null;
+    logVisit(name, email);
+  }, [user, loading]);
+
   return (
     <>
       <Navbar />
