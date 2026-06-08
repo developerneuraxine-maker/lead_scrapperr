@@ -8,6 +8,7 @@ const QUICK_TAGS = [
 export default function SearchBox({ onSearch, loading }) {
   const [keyword, setKeyword] = useState("");
   const [city, setCity] = useState("");
+  const [forceRefresh, setForceRefresh] = useState(false);
 
   const getHistory = () => {
     try {
@@ -31,7 +32,7 @@ export default function SearchBox({ onSearch, loading }) {
   const submit = () => {
     if (!keyword.trim() || !city.trim()) return;
     saveToHistory(keyword, city);
-    onSearch(keyword, city);
+    onSearch(keyword, city, forceRefresh);
   };
 
   const handleKey = (e) => {
@@ -41,7 +42,7 @@ export default function SearchBox({ onSearch, loading }) {
   const quickSearch = (kw, ct) => {
     setKeyword(kw);
     setCity(ct);
-    onSearch(kw, ct);
+    onSearch(kw, ct, forceRefresh);
   };
 
   return (
@@ -124,6 +125,20 @@ export default function SearchBox({ onSearch, loading }) {
           ) : <Search size={16} />}
           {loading ? "Searching..." : "Find Leads"}
         </button>
+      </div>
+
+      {/* Force Refresh Checkbox */}
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, marginTop: 14 }}>
+        <input 
+          type="checkbox" 
+          id="force-refresh-cb" 
+          checked={forceRefresh} 
+          onChange={e => setForceRefresh(e.target.checked)}
+          style={{ cursor: "pointer", width: 14, height: 14 }}
+        />
+        <label htmlFor="force-refresh-cb" style={{ fontSize: 12, color: "var(--t2)", cursor: "pointer", userSelect: "none", fontFamily: "DM Sans, sans-serif" }}>
+          Fetch fresh live data (bypass cache)
+        </label>
       </div>
 
       {/* Quick Tags */}
