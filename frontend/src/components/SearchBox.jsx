@@ -2,16 +2,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 
 const QUICK_TAGS = [
-  { label: "🔧 Plumber · Akola", kw: "Plumber", city: "Akola" },
-  { label: "👨‍⚕️ Doctor · Nagpur", kw: "Doctor", city: "Nagpur" },
-  { label: "💻 Developer · Pune", kw: "Developer", city: "Pune" },
-  { label: "⚡ Electrician · Mumbai", kw: "Electrician", city: "Mumbai" },
-  { label: "🔩 Mechanic · Nashik", kw: "Mechanic", city: "Nashik" },
-  { label: "🦷 Dentist · Aurangabad", kw: "Dentist", city: "Aurangabad" },
-  { label: "✂️ Barber · Nagpur", kw: "Barber", city: "Nagpur" },
-  { label: "🏋️ Gym · Mumbai", kw: "Gym", city: "Mumbai" },
-  { label: "📊 CA · Pune", kw: "CA", city: "Pune" },
-  { label: "📸 Photographer · Indore", kw: "Photographer", city: "Indore" },
+  
 ];
 
 export default function SearchBox({ onSearch, loading }) {

@@ -7,7 +7,7 @@ const API = axios.create({
 });
 
 // Search for real businesses via Apify
-export async function searchLeads(keyword, city) {
+export async function searchLeads(keyword, city, forceRefresh = false) {
   try {
     let userName = null;
     let userEmail = null;
@@ -20,7 +20,7 @@ export async function searchLeads(keyword, city) {
       }
     } catch (_) {}
 
-    const res = await API.post("/api/search", { keyword, city, userName, userEmail });
+    const res = await API.post("/api/search", { keyword, city, userName, userEmail, forceRefresh });
     return res.data;
   } catch (err) {
     if (
@@ -67,7 +67,18 @@ export async function exportLeads(results, keyword, city) {
 
 // Get analytics
 export async function getAnalytics() {
-  const res = await API.get("/api/analytics", { timeout: 15000 });
+  let email = null;
+  try {
+    const stored = localStorage.getItem("lf_user");
+    if (stored) {
+      email = JSON.parse(stored).email;
+    }
+  } catch (_) {}
+
+  const res = await API.get("/api/analytics", {
+    headers: { "x-admin-email": email },
+    timeout: 15000,
+  });
   return res.data;
 }
 

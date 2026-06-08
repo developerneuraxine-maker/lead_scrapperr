@@ -142,48 +142,56 @@ async function searchGoogleMaps(keyword, city) {
     {
       // The only required field — everything else is optional
       searchStringsArray:        [`${keyword} in ${city}`],
-      maxCrawledPlacesPerSearch: 150,     // adapt dynamically to find all available leads
+      maxCrawledPlacesPerSearch: 300,     // adapt dynamically to find all available leads
       language:                  "en",
       countryCode:               "in",   // India
     }
   );
 
-  console.log(`   [Apify] Searching social profiles for ${items.length} businesses...`);
+  console.log(`   [Apify] Searching social profiles for ${items.length} businesses in batches of 5...`);
 
-  const leads = await Promise.all(
-    items.map(async (p) => {
-      const baseLead = {
-        name:      p.title        || p.name        || "Unknown",
-        address:   p.address      || p.street      || "",
-        phone:     p.phone        || p.phoneUnformatted || null,
-        rating:    p.totalScore   || p.rating      || null,
-        reviews:   p.reviewsCount || p.reviewCount || 0,
-        maps_url:  p.url          || p.googleMapsUrl || null,
-        website:   p.website      || null,
-        instagram: p.instagram    || p.instagramUrl  || null,
-        linkedin:  p.linkedin     || p.linkedInUrl   || null,
-        facebook:  p.facebook     || p.facebookUrl   || null,
-        photo:     p.imageUrl     || p.thumbnail     || null,
-        category:  keyword,
-        city:      city,
-      };
+  const leads = [];
+  const batchSize = 5;
 
-      if (!baseLead.instagram || !baseLead.linkedin) {
-        console.log(`   [Social] Looking up: ${baseLead.name}`);
-        const socials = await searchSocials(baseLead.name, city);
-        if (!baseLead.instagram && socials.instagram) {
-          baseLead.instagram = socials.instagram;
-          console.log(`   [Social] ✓ Instagram found: ${socials.instagram}`);
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    console.log(`   [Apify] Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(items.length / batchSize)}...`);
+    const batchLeads = await Promise.all(
+      batch.map(async (p) => {
+        const baseLead = {
+          name:      p.title        || p.name        || "Unknown",
+          address:   p.address      || p.street      || "",
+          phone:     p.phone        || p.phoneUnformatted || null,
+          rating:    p.totalScore   || p.rating      || null,
+          reviews:   p.reviewsCount || p.reviewCount || 0,
+          maps_url:  p.url          || p.googleMapsUrl || null,
+          website:   p.website      || null,
+          instagram: p.instagram    || p.instagramUrl  || null,
+          linkedin:  p.linkedin     || p.linkedInUrl   || null,
+          facebook:  p.facebook     || p.facebookUrl   || null,
+          photo:     p.imageUrl     || p.thumbnail     || null,
+          category:  keyword,
+          city:      city,
+        };
+
+        if (!baseLead.instagram || !baseLead.linkedin) {
+          console.log(`   [Social] Looking up: ${baseLead.name}`);
+          const socials = await searchSocials(baseLead.name, city);
+          if (!baseLead.instagram && socials.instagram) {
+            baseLead.instagram = socials.instagram;
+            console.log(`   [Social] ✓ Instagram found: ${socials.instagram}`);
+          }
+          if (!baseLead.linkedin && socials.linkedin) {
+            baseLead.linkedin = socials.linkedin;
+            console.log(`   [Social] ✓ LinkedIn found: ${socials.linkedin}`);
+          }
         }
-        if (!baseLead.linkedin && socials.linkedin) {
-          baseLead.linkedin = socials.linkedin;
-          console.log(`   [Social] ✓ LinkedIn found: ${socials.linkedin}`);
-        }
-      }
 
-      return baseLead;
-    })
-  );
+        return baseLead;
+      })
+    );
+    leads.push(...batchLeads);
+  }
 
   console.log(`   [Apify] ✓ All leads enriched with social profiles`);
   return leads;

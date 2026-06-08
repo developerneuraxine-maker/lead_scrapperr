@@ -8,8 +8,8 @@ export default function HomePage() {
   const { results, loading, error, lastSearch, loadingStep, search } = useSearch();
   const resultsRef = useRef(null);
 
-  const handleSearch = async (keyword, city) => {
-    await search(keyword, city);
+  const handleSearch = async (keyword, city, forceRefresh = false) => {
+    await search(keyword, city, forceRefresh);
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 200);
@@ -181,7 +181,7 @@ export default function HomePage() {
         <ResultsSection
           results={results}
           lastSearch={lastSearch}
-          onRefresh={() => lastSearch && handleSearch(lastSearch.keyword, lastSearch.city)}
+          onRefresh={() => lastSearch && handleSearch(lastSearch.keyword, lastSearch.city, true)}
         />
       </div>
 

@@ -8,7 +8,7 @@ export function useSearch() {
   const [lastSearch, setLastSearch] = useState(null);
   const [loadingStep, setLoadingStep] = useState(0);
 
-  const search = useCallback(async (keyword, city) => {
+  const search = useCallback(async (keyword, city, forceRefresh = false) => {
     if (!keyword.trim() || !city.trim()) return;
 
     setLoading(true);
@@ -23,7 +23,7 @@ export function useSearch() {
     );
 
     try {
-      const data = await searchLeads(keyword.trim(), city.trim());
+      const data = await searchLeads(keyword.trim(), city.trim(), forceRefresh);
       timers.forEach(clearTimeout);
       setResults(data.results || []);
       setLastSearch({ keyword: keyword.trim(), city: city.trim(), total: data.total });

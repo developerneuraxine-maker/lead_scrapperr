@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import LoginModal from "./LoginModal";
 
@@ -112,6 +113,25 @@ export default function Navbar() {
                     <div style={{ fontSize: 13, fontWeight: 600, color: "#eeeeff" }}>{user.name}</div>
                     <div style={{ fontSize: 11, color: "#8888aa", marginTop: 2 }}>{user.email}</div>
                   </div>
+                  {/* Admin Panel Link */}
+                  {user.email === "hardiksedani2610@gmail.com" && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setDropOpen(false)}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 8,
+                        padding: "12px 16px",
+                        borderBottom: "1px solid rgba(255,255,255,0.06)",
+                        color: "#b89aff", fontSize: 13, fontWeight: 500,
+                        textDecoration: "none",
+                        transition: "background 0.2s",
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = "rgba(184,154,255,0.06)"}
+                      onMouseLeave={e => e.currentTarget.style.background = "none"}
+                    >
+                      <span>⚙️</span> Admin Panel
+                    </Link>
+                  )}
                   {/* Logout */}
                   <button
                     onClick={() => { logout(); setDropOpen(false); }}

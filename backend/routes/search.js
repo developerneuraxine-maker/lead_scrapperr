@@ -9,7 +9,7 @@ const { logSearch, saveLeads, getCachedResults, clearCache } = require("../utils
 // Returns real scraped data from Google Maps via Apify
 // ─────────────────────────────────────────────────────────────────────────────
 router.post("/search", async (req, res) => {
-  const { keyword, city, userName, userEmail } = req.body;
+  const { keyword, city, userName, userEmail, forceRefresh } = req.body;
 
   if (!keyword || !city) {
     return res.status(400).json({ error: "keyword and city are required" });
@@ -21,9 +21,14 @@ router.post("/search", async (req, res) => {
     "unknown";
 
   try {
-    console.log(`\n🔍 Searching: "${keyword}" in "${city}"`);
+    console.log(`\n🔍 Searching: "${keyword}" in "${city}" (forceRefresh: ${!!forceRefresh})`);
 
-    const cached = await getCachedResults(keyword, city);
+    if (forceRefresh) {
+      console.log(`   [Cache] Force refresh enabled — clearing cache first`);
+      await clearCache(keyword, city);
+    }
+
+    const cached = forceRefresh ? null : await getCachedResults(keyword, city);
     if (cached && cached.length > 0) {
       console.log(`   [Cache] Serving cached results — skipping Apify`);
       return res.json({
