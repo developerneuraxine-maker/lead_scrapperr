@@ -18,8 +18,11 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json({ limit: "5mb" }));
 app.use(cors({
-  origin:      process.env.FRONTEND_URL || "*",
-  methods:     ["GET", "POST"],
+  origin: (origin, callback) => {
+    // Dynamic origin mirroring allows credential sharing (cookies/auth) from any domain (like Vercel)
+    callback(null, true);
+  },
+  methods:     ["GET", "POST", "OPTIONS"],
   credentials: true,
 }));
 
