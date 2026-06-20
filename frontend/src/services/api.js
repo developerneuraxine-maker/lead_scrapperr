@@ -1,7 +1,14 @@
 import axios from "axios";
 
+let baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// Ensure baseURL has a protocol prefix to prevent relative URL concatenation
+if (baseURL && !baseURL.startsWith("http://") && !baseURL.startsWith("https://")) {
+  baseURL = `https://${baseURL}`;
+}
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
+  baseURL,
   // 6 minutes — Apify scraping takes 2-4 minutes to complete
   timeout: 360000,
 });
