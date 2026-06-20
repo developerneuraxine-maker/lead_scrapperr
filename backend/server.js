@@ -11,6 +11,7 @@ const analyticsRouter = require("./routes/analytics");
 const { logVisitor }  = require("./utils/supabase");
 
 const app  = express();
+app.set("trust proxy", 1); // Trust Railway's reverse proxy/load balancer
 const PORT = process.env.PORT || 5000;
 
 // ── Security Middleware ───────────────────────────────────────────────────────
