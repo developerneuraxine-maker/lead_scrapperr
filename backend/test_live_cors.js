@@ -12,7 +12,8 @@ async function checkPost() {
       },
       data: {
         keyword: "plumber",
-        city: "Akola"
+        city: "Akola",
+        forceRefresh: true
       }
     });
     console.log("POST request succeeded!");
