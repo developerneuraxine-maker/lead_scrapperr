@@ -29,10 +29,22 @@ export function useSearch() {
       setLastSearch({ keyword: keyword.trim(), city: city.trim(), total: data.total });
     } catch (err) {
       timers.forEach(clearTimeout);
-      const msg =
-        err.response?.data?.error ||
-        "Search failed. Please check your connection and try again.";
-      setError(msg);
+      let errorMsg = "Search failed. Please check your connection and try again.";
+      if (err.response?.data) {
+        const data = err.response.data;
+        if (typeof data.error === "string") {
+          errorMsg = data.error;
+        } else if (data.error && typeof data.error === "object") {
+          errorMsg = data.error.message || data.error.error || JSON.stringify(data.error);
+        } else if (typeof data === "string") {
+          errorMsg = data;
+        } else if (data.message) {
+          errorMsg = data.message;
+        }
+      } else if (err.message) {
+        errorMsg = err.message;
+      }
+      setError(errorMsg);
     } finally {
       setLoading(false);
       setLoadingStep(0);
