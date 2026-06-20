@@ -11,8 +11,8 @@ async function checkPost() {
         "Content-Type": "application/json"
       },
       data: {
-        keyword: "plumber",
-        city: "Akola",
+        keyword: "restaurant",
+        city: "Mumbai",
         forceRefresh: true
       }
     });
