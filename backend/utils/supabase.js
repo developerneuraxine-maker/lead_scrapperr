@@ -29,7 +29,7 @@ async function logSearch(keyword, city, userIp, resultCount, userName = "Guest",
 // ── Save all scraped leads to database ────────────────────────────────────────
 async function saveLeads(keyword, city, leads) {
   try {
-    if (!leads || !leads.length) return;
+    if (!leads || !leads.length) return [];
 
     const rows = leads.map((l) => ({
       keyword:         keyword.toLowerCase().trim(),
@@ -47,11 +47,29 @@ async function saveLeads(keyword, city, leads) {
       photo_url:       l.photo           || null,
     }));
 
-    const { error } = await supabase.from("leads").insert(rows);
-    if (error) console.warn("Supabase saveLeads error:", error.message);
-    else console.log(`   ✓ Saved ${rows.length} leads to Supabase`);
+    const { data, error } = await supabase.from("leads").insert(rows).select();
+    if (error) {
+      console.warn("Supabase saveLeads error:", error.message);
+      return [];
+    }
+    console.log(`   ✓ Saved ${rows.length} leads to Supabase`);
+    return data || [];
   } catch (e) {
     console.warn("saveLeads failed:", e.message);
+    return [];
+  }
+}
+
+// ── Update social links for a specific lead ──────────────────────────────────
+async function updateLeadSocials(id, instagram, linkedin) {
+  try {
+    const { error } = await supabase
+      .from("leads")
+      .update({ instagram, linkedin })
+      .eq("id", id);
+    if (error) console.warn(`Supabase updateLeadSocials error for ID ${id}:`, error.message);
+  } catch (e) {
+    console.warn(`updateLeadSocials failed for ID ${id}:`, e.message);
   }
 }
 
@@ -153,4 +171,4 @@ async function clearCache(keyword, city) {
   }
 }
 
-module.exports = { logSearch, saveLeads, logVisitor, getAnalytics, supabase, getCachedResults, clearCache };
+module.exports = { logSearch, saveLeads, logVisitor, getAnalytics, supabase, getCachedResults, clearCache, updateLeadSocials };

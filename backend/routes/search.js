@@ -1,7 +1,7 @@
 const express  = require("express");
 const router   = express.Router();
-const { searchGoogleMaps }    = require("../utils/apify");
-const { logSearch, saveLeads, getCachedResults, clearCache } = require("../utils/supabase");
+const { searchGoogleMaps, enrichLeadsWithSocials } = require("../utils/apify");
+const { logSearch, saveLeads, getCachedResults, clearCache, updateLeadSocials } = require("../utils/supabase");
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/search
@@ -51,17 +51,39 @@ router.post("/search", async (req, res) => {
       return res.json({ results: [], total: 0, keyword, city });
     }
 
-    console.log(`   ✓ Got ${leads.length} real leads from Apify`);
+    console.log(`   ✓ Got ${leads.length} basic leads from Google Maps`);
 
-    // Save to Supabase in background — don't make user wait
-    logSearch(keyword, city, userIp, leads.length, userName, userEmail).catch(() => {});
-    saveLeads(keyword, city, leads).catch(() => {});
-
-    return res.json({
+    // Respond immediately to the client to avoid Railway gateway timeout (60s limit)
+    res.json({
       results: leads,
       total:   leads.length,
       keyword,
       city,
+    });
+
+    // Run logging and social profile enrichment in the background
+    logSearch(keyword, city, userIp, leads.length, userName, userEmail).catch(() => {});
+
+    (async () => {
+      // 1. Save basic leads first to build cache instantly
+      const savedLeads = await saveLeads(keyword, city, leads);
+
+      // 2. Perform social lookup in background
+      const enrichedLeads = await enrichLeadsWithSocials(leads, keyword, city);
+
+      // 3. Update the database records with enriched social details
+      console.log(`   [Background] Updating database cache with enriched social profiles...`);
+      await Promise.all(
+        savedLeads.map(async (savedLead) => {
+          const enriched = enrichedLeads.find(l => l.name === savedLead.name);
+          if (enriched && (enriched.instagram !== savedLead.instagram || enriched.linkedin !== savedLead.linkedin)) {
+            await updateLeadSocials(savedLead.id, enriched.instagram || savedLead.instagram, enriched.linkedin || savedLead.linkedin);
+          }
+        })
+      );
+      console.log(`   [Background] ✓ Background social profile enrichment complete for "${keyword} in ${city}"`);
+    })().catch((err) => {
+      console.error(`   [Background] Enrichment error for "${keyword} in ${city}":`, err.message);
     });
 
   } catch (err) {

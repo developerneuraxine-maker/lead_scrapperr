@@ -148,32 +148,38 @@ async function searchGoogleMaps(keyword, city) {
     }
   );
 
-  console.log(`   [Apify] Searching social profiles for ${items.length} businesses in batches of 5...`);
+  const leads = items.map((p) => ({
+    name:      p.title        || p.name        || "Unknown",
+    address:   p.address      || p.street      || "",
+    phone:     p.phone        || p.phoneUnformatted || null,
+    rating:    p.totalScore   || p.rating      || null,
+    reviews:   p.reviewsCount || p.reviewCount || 0,
+    maps_url:  p.url          || p.googleMapsUrl || null,
+    website:   p.website      || null,
+    instagram: p.instagram    || p.instagramUrl  || null,
+    linkedin:  p.linkedin     || p.linkedInUrl   || null,
+    facebook:  p.facebook     || p.facebookUrl   || null,
+    photo:     p.imageUrl     || p.thumbnail     || null,
+    category:  keyword,
+    city:      city,
+  }));
 
-  const leads = [];
+  return leads;
+}
+
+// ── Background Social Profiler ────────────────────────────────────────────────
+async function enrichLeadsWithSocials(leads, keyword, city) {
+  console.log(`   [Apify] Searching social profiles for ${leads.length} businesses in batches of 5...`);
+
+  const enrichedLeads = [];
   const batchSize = 5;
 
-  for (let i = 0; i < items.length; i += batchSize) {
-    const batch = items.slice(i, i + batchSize);
-    console.log(`   [Apify] Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(items.length / batchSize)}...`);
+  for (let i = 0; i < leads.length; i += batchSize) {
+    const batch = leads.slice(i, i + batchSize);
+    console.log(`   [Apify] Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(leads.length / batchSize)}...`);
     const batchLeads = await Promise.all(
-      batch.map(async (p) => {
-        const baseLead = {
-          name:      p.title        || p.name        || "Unknown",
-          address:   p.address      || p.street      || "",
-          phone:     p.phone        || p.phoneUnformatted || null,
-          rating:    p.totalScore   || p.rating      || null,
-          reviews:   p.reviewsCount || p.reviewCount || 0,
-          maps_url:  p.url          || p.googleMapsUrl || null,
-          website:   p.website      || null,
-          instagram: p.instagram    || p.instagramUrl  || null,
-          linkedin:  p.linkedin     || p.linkedInUrl   || null,
-          facebook:  p.facebook     || p.facebookUrl   || null,
-          photo:     p.imageUrl     || p.thumbnail     || null,
-          category:  keyword,
-          city:      city,
-        };
-
+      batch.map(async (lead) => {
+        const baseLead = { ...lead };
         if (!baseLead.instagram || !baseLead.linkedin) {
           console.log(`   [Social] Looking up: ${baseLead.name}`);
           const socials = await searchSocials(baseLead.name, city);
@@ -186,19 +192,18 @@ async function searchGoogleMaps(keyword, city) {
             console.log(`   [Social] ✓ LinkedIn found: ${socials.linkedin}`);
           }
         }
-
         return baseLead;
       })
     );
-    leads.push(...batchLeads);
+    enrichedLeads.push(...batchLeads);
   }
 
   console.log(`   [Apify] ✓ All leads enriched with social profiles`);
-  return leads;
+  return enrichedLeads;
 }
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-module.exports = { searchGoogleMaps };
+module.exports = { searchGoogleMaps, enrichLeadsWithSocials };
